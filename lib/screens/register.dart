@@ -58,11 +58,17 @@ class _RegisterState extends State<Register> {
         title: Text('Register'),
       ),
       body: Container(
+        decoration: BoxDecoration(
+            gradient: RadialGradient(
+                colors: [Colors.white, Colors.blue[900]],
+                radius: 1.5,
+                center: Alignment(-1, -1))),
         padding: EdgeInsets.all(50.0),
         child: Column(
           children: <Widget>[
             nameTextFormField(),
-            Container(margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
+            Container(
+              margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
               child: emailTextFormField(),
             ),
             passwordTextFormField()
