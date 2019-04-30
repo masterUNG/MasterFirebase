@@ -6,6 +6,9 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  // Explicit
+  final formKey = GlobalKey<FormState>();
+
   Widget passwordTextFormField() {
     return TextFormField(
       decoration: InputDecoration(
@@ -18,6 +21,11 @@ class _RegisterState extends State<Register> {
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15.0),
               borderSide: BorderSide(width: 1.0, color: Colors.grey))),
+      validator: (String value) {
+        if (value.length <= 5) {
+          return 'Please Type Password more 6 Charactor';
+        }
+      },
     );
   }
 
@@ -33,6 +41,13 @@ class _RegisterState extends State<Register> {
             Icons.email,
             color: Colors.green,
           )),
+      validator: (String value) {
+        if (value.length == 0) {
+          return 'กรุณากรอก Email สิคะ';
+        } else if (!((value.contains('@')) && (value.contains('.')))) {
+          return 'Please Fill Email Format';
+        }
+      },
     );
   }
 
@@ -41,13 +56,19 @@ class _RegisterState extends State<Register> {
       decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15.0),
-              borderSide: BorderSide(width: 1.0, color: Colors.grey)),
+              borderSide: BorderSide(width: 1.0, color: Colors.red)),
           labelText: 'Name :',
           hintText: 'Type Your Name',
+          labelStyle: TextStyle(color: Colors.red),
           icon: Icon(
             Icons.face,
             color: Colors.red,
           )),
+      validator: (String value) {
+        if (value.length == 0) {
+          return 'Please Fill Name in the Blank';
+        }
+      },
     );
   }
 
@@ -57,6 +78,7 @@ class _RegisterState extends State<Register> {
       tooltip: 'Upload To Firebase',
       onPressed: () {
         print('You Click Upload');
+        if (formKey.currentState.validate()) {}
       },
     );
   }
@@ -64,29 +86,32 @@ class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue[900],
-        title: Text('Register'),
-        actions: <Widget>[uploadButton()],
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-            gradient: RadialGradient(
-                colors: [Colors.white, Colors.blue[900]],
-                radius: 1.5,
-                center: Alignment(-1, -1))),
-        padding: EdgeInsets.all(50.0),
-        child: Column(
-          children: <Widget>[
-            nameTextFormField(),
-            Container(
-              margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
-              child: emailTextFormField(),
-            ),
-            passwordTextFormField()
-          ],
+        resizeToAvoidBottomPadding: false,
+        appBar: AppBar(
+          backgroundColor: Colors.blue[900],
+          title: Text('Register'),
+          actions: <Widget>[uploadButton()],
         ),
-      ),
-    );
+        body: Form(
+          key: formKey,
+          child: Container(
+            decoration: BoxDecoration(
+                gradient: RadialGradient(
+                    colors: [Colors.white, Colors.blue[900]],
+                    radius: 1.5,
+                    center: Alignment(-1, -1))),
+            padding: EdgeInsets.all(50.0),
+            child: Column(
+              children: <Widget>[
+                nameTextFormField(),
+                Container(
+                  margin: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                  child: emailTextFormField(),
+                ),
+                passwordTextFormField()
+              ],
+            ),
+          ),
+        ));
   }
 }
