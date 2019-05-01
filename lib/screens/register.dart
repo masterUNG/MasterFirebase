@@ -11,6 +11,12 @@ class _RegisterState extends State<Register> {
   final formKey = GlobalKey<FormState>();
   String nameString, emailString, passwordString;
 
+  // For Firebase
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
+  // For SnackBar
+  final snackBarKey = GlobalKey<ScaffoldState>();
+
   Widget passwordTextFormField() {
     return TextFormField(
       decoration: InputDecoration(
@@ -59,8 +65,6 @@ class _RegisterState extends State<Register> {
     );
   }
 
-  
-
   Widget nameTextFormField() {
     return TextFormField(
       decoration: InputDecoration(
@@ -93,15 +97,43 @@ class _RegisterState extends State<Register> {
         print('You Click Upload');
         if (formKey.currentState.validate()) {
           formKey.currentState.save();
-          print('name = $nameString, email = $emailString, password = $passwordString');
+          print(
+              'name = $nameString, email = $emailString, password = $passwordString');
+          uploadValueToFirebae();
         }
       },
     );
   }
 
+  void uploadValueToFirebae() async {
+    FirebaseUser firebaseUser = await firebaseAuth
+        .createUserWithEmailAndPassword(
+            email: emailString, password: passwordString)
+        .then((user) {
+      print('Register Success With ==>>> $user');
+    }).catchError((error) {
+      String errorString = error.message;
+      print('HAVE ERROR ===>>> $errorString');
+      showSnackBar(errorString);
+    });
+  }
+
+  void showSnackBar(String messageString) {
+    SnackBar snackBar = SnackBar(
+      duration: Duration(seconds: 10),
+      backgroundColor: Colors.red,
+      content: Text(messageString),
+      action: SnackBarAction(
+        label: 'Close',onPressed: (){},
+      ),
+    );
+    snackBarKey.currentState.showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: snackBarKey,
         resizeToAvoidBottomPadding: false,
         appBar: AppBar(
           backgroundColor: Colors.blue[900],
