@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class Register extends StatefulWidget {
   @override
@@ -13,6 +14,7 @@ class _RegisterState extends State<Register> {
 
   // For Firebase
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  FirebaseDatabase firbaseDatabase = FirebaseDatabase.instance;
 
   // For SnackBar
   final snackBarKey = GlobalKey<ScaffoldState>();
@@ -111,12 +113,31 @@ class _RegisterState extends State<Register> {
             email: emailString, password: passwordString)
         .then((user) {
       print('Register Success With ==>>> $user');
-      Navigator.pop(context);
+
+      addValueToDatabaseFirebase(context);
+
+      // Navigator.pop(context);
     }).catchError((error) {
       String errorString = error.message;
       print('HAVE ERROR ===>>> $errorString');
       showSnackBar(errorString);
     });
+  }
+
+  void addValueToDatabaseFirebase(BuildContext context) async {
+    FirebaseUser firebaseUser = await firebaseAuth.currentUser();
+    String uidString = firebaseUser.uid.toString();
+    print('uidString ==>> $uidString');
+
+    // Create Map Type
+    Map<String, String> map = Map();
+    map['Name'] = nameString;
+    map['Nation'] = 'Thai';
+
+    // Update Data To Firebase
+    await firbaseDatabase.reference().child(uidString).set(map);
+
+    Navigator.pop(context);
   }
 
   void showSnackBar(String messageString) {
@@ -125,7 +146,8 @@ class _RegisterState extends State<Register> {
       backgroundColor: Colors.red,
       content: Text(messageString),
       action: SnackBarAction(
-        label: 'Close',onPressed: (){},
+        label: 'Close',
+        onPressed: () {},
       ),
     );
     snackBarKey.currentState.showSnackBar(snackBar);
