@@ -59,6 +59,8 @@ class _RegisterState extends State<Register> {
     );
   }
 
+  
+
   Widget nameTextFormField() {
     return TextFormField(
       decoration: InputDecoration(
